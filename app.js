@@ -27,7 +27,7 @@ db.once('open', () => {
 
 // 設定路由
 app.get('/', (req, res) => {
-  res.send('you got it')
+  res.render('index')
 })
 
 // 監聽路由
