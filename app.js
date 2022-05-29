@@ -8,8 +8,9 @@ const methodOverride = require('method-override')
 const port = 3000
 const app = express()
 
-// 引入自建module
+// 引入自建modules
 const Shorten = require('./models/shortURL')
+const generateShortUrl = require('./generate_short_URL')
 
 // 使用express-handlebars為樣板引擎
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
