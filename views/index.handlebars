@@ -7,7 +7,8 @@
 
   <form action="/" method="post" class="container">
     <div class="m-3 w-auto d-flex flex-column align-items-center">
-      <input type="url" name="originURL" id="originURL" placeholder="Input URL here" class="form-control" style="background-color: #f5f5f5; border: 0">
+      {{!-- input限制為required: 若使用者沒有輸入內容就按下送出，會防止表單送出，並提示使用者 --}}
+      <input type="url" name="originUrl" id="originUrl" placeholder="Input URL here" class="form-control" style="background-color: #f5f5f5; border: 0" required>
       <button type="submit" class="btn btn-outline-primary btn-sm mt-3">Shorten</button>
     </div>
   </form>

@@ -9,7 +9,7 @@ const port = 3000
 const app = express()
 
 // 引入自建modules
-const Shorten = require('./models/shortURL')
+const URLs = require('./models/shortURL')
 const generateShortUrl = require('./generate_short_URL')
 
 // 使用express-handlebars為樣板引擎
@@ -32,6 +32,22 @@ db.once('open', () => {
 // 設定路由
 app.get('/', (req, res) => {
   res.render('index')
+})
+
+app.post('/', (req, res) => {
+  const inputData = {originUrl: req.body.originUrl, shortUrl: generateShortUrl()}
+  URLs.create(inputData)
+    .then(() => res.redirect('/'))
+    .catch(error => console.error(error))
+})
+
+app.get('/:short', (req, res) => {
+  const shortURLInput = req.params.short
+  
+  URLs.find({ shortUrl: shortURLInput })
+    .lean()
+    .then(URL => res.redirect(URL[0].originUrl))
+    .catch(error => console.error(error))
 })
 
 // 監聽路由
