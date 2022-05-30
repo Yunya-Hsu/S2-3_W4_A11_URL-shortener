@@ -37,8 +37,16 @@ app.get('/', (req, res) => {
 app.post('/', (req, res) => {
   const inputData = {originUrl: req.body.originUrl, shortUrl: generateShortUrl()}
   URLs.create(inputData)
-    .then(() => res.redirect('/'))
+    .then(() => URLs.find({ originUrl: req.body.originUrl }).lean())
+    .then(URL => res.redirect(`/results/${URL[0]._id}`))
     .catch(error => console.error(error))
+})
+
+app.get('/results/:id', (req, res) => {
+  const id = req.params.id
+  URLs.findById(id)
+    .lean()
+    .then(URL => res.render('result', { URL }))
 })
 
 app.get('/:short', (req, res) => {
