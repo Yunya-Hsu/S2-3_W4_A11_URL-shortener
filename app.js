@@ -2,7 +2,6 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 const mongoose = require('mongoose')
-const methodOverride = require('method-override')
 
 // 建立基本參數
 const port = 3000
