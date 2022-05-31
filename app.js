@@ -18,7 +18,6 @@ app.set('view engine', 'handlebars')
 
 // 使用body-parser和method-override
 app.use(express.urlencoded({ extended: true }))
-app.use(methodOverride('_method')) // FIXME:好像可以不用？
 
 // 建立mongoose連線
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -35,23 +34,20 @@ app.get('/', (req, res) => {
 })
 
 app.post('/', (req, res) => {
-  const shortKey = generateShortUrl()
-
   URLs.find({ originUrl: req.body.originUrl })
     .lean()
     .then(URL => {
-      if (URL.length <= 0) {
+      if (URL.length <= 0) { // 沒有重複網址，代表可以生成短網址了
         URLs.create({ originUrl: req.body.originUrl, shortUrl: generateShortUrl() })
           .then(() => URLs.find({ originUrl: req.body.originUrl }).lean())
           .then(URL => res.redirect(`/results/${URL[0]._id}`))
           .catch(error => console.error(error))
-      } else {
+      } else { // 輸入相同網址時產生一樣的縮址
         res.redirect(`/results/${URL[0]._id}`)
       }
     })
+    .catch(error => console.error(error))
   })
-
-  
 
 app.get('/results/:id', (req, res) => {
   const id = req.params.id
@@ -65,7 +61,13 @@ app.get('/:short', (req, res) => {
 
   URLs.find({ shortUrl: shortURLInput })
     .lean()
-    .then(URL => res.redirect(URL[0].originUrl))
+    .then(URL => {
+      if (URL.length <= 0) {
+        res.send("Sorry, cannot find this short URL.")
+      } else {
+        res.redirect(URL[0].originUrl)
+      }
+    })
     .catch(error => console.error(error))
 })
 
